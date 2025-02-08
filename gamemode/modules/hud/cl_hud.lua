@@ -259,14 +259,22 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
 
     -- Screen Scaling
     local screenW, screenH = ScrW(), ScrH()
+    local aspectRatio = screenW / screenH
     local barWidth = screenW * 0.18
     local barHeight = screenH * 0.03
-    local avatarSize = screenH * 0.1 -- Avatar size
+    local avatarSize = math.Clamp(screenH * 0.1, 50, 150)  -- Ensure avatar size stays within bounds
     local padding = screenH * 0.005
     local totalHeight = barHeight * 3 + padding * 2 -- Total height including padding for the new armor bar
 
+    -- Adjustments for extreme aspect ratios
+    if aspectRatio > 1.6 then  -- Wide screens (16:9 or wider)
+        barHeight = screenH * 0.025
+    elseif aspectRatio < 1.3 then  -- Tall screens (4:3 or similar)
+        barHeight = screenH * 0.04
+    end
+
     -- Positioning
-    local boxX = screenW * 0.02 - 5
+    local boxX = screenW * 0.02
     local boxY = screenH * 0.9 - totalHeight - padding
     local boxWidth = barWidth + avatarSize + 15  -- Adjust width for the larger avatar
     local boxHeight = totalHeight + padding * 2  -- Account for padding
@@ -312,6 +320,14 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
         AvatarFrame:SetPlayer(ply, 64) -- Get Steam Avatar
     end
 end)
+
+-- Hide Default HUD Elements
+hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
+    if name == "CHudHealth" or name == "CHudBattery" then
+        return false
+    end
+end)
+
 
 -- Hide Default HUD Elements
 hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
