@@ -540,4 +540,4 @@ Hungermod module
 GM.Config.hungerspeed = 2
 -- starverate <Amount> - How much health that is taken away every second the player is starving  (3 is the default).
 GM.Config.starverate = 3
-GM.Config.mprintamount = 10000000000
+GM.Config.mprintamount = 100
