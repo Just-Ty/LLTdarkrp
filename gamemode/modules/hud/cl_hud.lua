@@ -235,7 +235,7 @@ usermessage.Hook("AdminTell", function(msg)
 end)
 
 --[[---------------------------------------------------------------------------
-Drawing the HUD elements such as Health etc.
+Drawing the HUD elements such as Health etc. 1
 ---------------------------------------------------------------------------]]
 local smoothedHealth = 100
 local smoothedArmor = 100 -- New variable for armor smoothing
