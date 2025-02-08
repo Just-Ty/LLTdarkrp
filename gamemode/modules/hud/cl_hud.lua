@@ -257,26 +257,19 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     smoothedHealth = Lerp(0.1, smoothedHealth, health)
     smoothedArmor = Lerp(0.1, smoothedArmor, armor)
 
-    -- Screen Scaling
-    local screenW, screenH = ScrW(), ScrH()
-    local aspectRatio = screenW / screenH
-    local barWidth = screenW * 0.18
-    local barHeight = screenH * 0.03
-    local avatarSize = math.Clamp(screenH * 0.1, 50, 150)  -- Ensure avatar size stays within bounds
-    local padding = screenH * 0.005
+    -- Fixed Size for All Screens
+    local boxWidth = 400
+    local boxHeight = 150
+    local barWidth = 300
+    local barHeight = 20
+    local avatarSize = 75  -- Fixed avatar size
+    local padding = 5
     local totalHeight = barHeight * 3 + padding * 2 -- Total height including padding for the new armor bar
 
-    -- Adjustments for extreme aspect ratios
-    if aspectRatio > 1.6 then  -- Wide screens (16:9 or wider)
-        barHeight = screenH * 0.025
-    elseif aspectRatio < 1.3 then  -- Tall screens (4:3 or similar)
-        barHeight = screenH * 0.04
-    end
-
-    -- Positioning
-    local boxX = screenW * 0.02
-    local boxY = screenH * 0.9 - totalHeight - padding
-    local boxWidth = barWidth + avatarSize + 15  -- Adjust width for the larger avatar
+    -- Positioning (fixed values)
+    local boxX = ScrW() * 0.02
+    local boxY = ScrH() * 0.9 - totalHeight - padding
+    local boxWidth = boxWidth
     local boxHeight = totalHeight + padding * 2  -- Account for padding
 
     -- Colors
@@ -323,7 +316,7 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     -- Create avatar if it doesn’t exist
     if not IsValid(AvatarFrame) then
         AvatarFrame = vgui.Create("AvatarImage")
-        AvatarFrame:SetSize(avatarSize, avatarSize)  -- Scale up the avatar size
+        AvatarFrame:SetSize(avatarSize, avatarSize)  -- Fixed avatar size
         AvatarFrame:SetPos(boxX + 5, boxY + 5)
         AvatarFrame:SetPlayer(ply, 64) -- Get Steam Avatar
     end
@@ -335,6 +328,7 @@ hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
         return false
     end
 end)
+
 
 
 
