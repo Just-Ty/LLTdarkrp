@@ -303,14 +303,22 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, barWidth, barHeight, Color(60, 60, 70, 200))
     draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, math.max(barWidth * (smoothedHealth / maxHealth), 1), barHeight, healthColor)
     -- Centered text for HP
-    draw.SimpleText("HP: " .. health, "DarkRP_HUD", boxX + avatarSize + 10 + (barWidth / 2), healthBarY + (barHeight / 2), textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    local healthText = "HP: " .. health
+    local healthTextWidth, healthTextHeight = surface.GetTextSize(healthText)
+    local healthTextX = boxX + avatarSize + 10 + (barWidth / 2) - (healthTextWidth / 2)
+    local healthTextY = healthBarY + (barHeight / 2) - (healthTextHeight / 2)
+    draw.SimpleText(healthText, "DarkRP_HUD", healthTextX, healthTextY, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 
     -- Armor Bar (New)
     local armorBarY = healthBarY + barHeight + padding
     draw.RoundedBox(6, boxX + avatarSize + 10, armorBarY, barWidth, barHeight * 0.5, Color(60, 60, 70, 200))  -- Thinner bar
     draw.RoundedBox(6, boxX + avatarSize + 10, armorBarY, math.max(barWidth * (smoothedArmor / maxArmor), 1), barHeight * 0.5, armorColor)
     -- Centered text for Armor
-    draw.SimpleText("Armor: " .. armor, "DarkRP_HUD", boxX + avatarSize + 10 + (barWidth / 2), armorBarY + (barHeight * 0.25), textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    local armorText = "Armor: " .. armor
+    local armorTextWidth, armorTextHeight = surface.GetTextSize(armorText)
+    local armorTextX = boxX + avatarSize + 10 + (barWidth / 2) - (armorTextWidth / 2)
+    local armorTextY = armorBarY + (barHeight * 0.25) - (armorTextHeight / 2)
+    draw.SimpleText(armorText, "DarkRP_HUD", armorTextX, armorTextY, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 
     -- Create avatar if it doesn’t exist
     if not IsValid(AvatarFrame) then
@@ -320,23 +328,6 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
         AvatarFrame:SetPlayer(ply, 64) -- Get Steam Avatar
     end
 end)
-
--- Hide Default HUD Elements
-hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
-    if name == "CHudHealth" or name == "CHudBattery" then
-        return false
-    end
-end)
-
-
--- Hide Default HUD Elements
-hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
-    if name == "CHudHealth" or name == "CHudBattery" then
-        return false
-    end
-end)
-
-
 
 -- Hide Default HUD Elements
 hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
