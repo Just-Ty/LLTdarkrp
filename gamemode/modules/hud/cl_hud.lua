@@ -329,6 +329,24 @@ hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
 end)
 
 
+-- Hide Default HUD Elements
+hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
+    if name == "CHudHealth" or name == "CHudBattery" then
+        return false
+    end
+end)
+
+
+
+-- Hide Default HUD Elements
+hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
+    if name == "CHudHealth" or name == "CHudBattery" then
+        return false
+    end
+end)
+
+
+
 
 --[[---------------------------------------------------------------------------
 Entity HUDPaint things
