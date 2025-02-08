@@ -237,29 +237,77 @@ end)
 --[[---------------------------------------------------------------------------
 Drawing the HUD elements such as Health etc.
 ---------------------------------------------------------------------------]]
-local function DrawHUD(gamemodeTable)
-    local shouldDraw = hook.Call("HUDShouldDraw", gamemodeTable, "DarkRP_HUD")
-    if shouldDraw == false then return end
+local smoothedHealth = 100
 
-    Scrw, Scrh = ScrW(), ScrH()
-    RelativeX, RelativeY = 0, Scrh
+hook.Add("HUDPaint", "DrawDarkRPHUD", function()
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    
+    -- Get Player Data
+    local health = ply:Health()
+    local maxHealth = ply:GetMaxHealth()
+    local money = ply:getDarkRPVar("money") or 0
+    local job = ply:getDarkRPVar("job") or "Unemployed"
+    local salary = ply:getDarkRPVar("salary") or 0  -- Get salary
 
-    shouldDraw = hook.Call("HUDShouldDraw", gamemodeTable, "DarkRP_LocalPlayerHUD")
-    shouldDraw = shouldDraw ~= false
-    if shouldDraw then
-        --Background
-        draw.RoundedBox(6, 0, Scrh - HUDHeight, HUDWidth, HUDHeight, ConVars.background)
-        DrawHealth()
-        DrawInfo()
-        GunLicense()
+    -- Smooth health animation
+    smoothedHealth = Lerp(0.1, smoothedHealth, health)
+
+    -- Screen Scaling
+    local screenW, screenH = ScrW(), ScrH()
+    local barWidth = screenW * 0.18
+    local barHeight = screenH * 0.03
+    local avatarSize = screenH * 0.035 -- Avatar size
+    local padding = screenH * 0.005
+    local totalHeight = barHeight * 3 + padding * 2 -- Total height including padding
+
+    -- Positioning
+    local boxX = screenW * 0.02 - 5
+    local boxY = screenH * 0.9 - totalHeight - padding
+    local boxWidth = barWidth + avatarSize + 15  -- Make space for the avatar
+    local boxHeight = totalHeight + padding * 2  -- Account for padding
+
+    -- Colors
+    local bgColor = Color(40, 40, 50, 220)
+    local accentColor = Color(100, 170, 255, 255)
+    local healthColor = Color(0, 170, 255, 255)
+    local textColor = Color(230, 230, 230)
+    local salaryColor = Color(150, 255, 150)
+
+    -- Background Panel
+    draw.RoundedBox(10, boxX, boxY, boxWidth, boxHeight, bgColor)
+
+    -- Job + Salary Display
+    draw.RoundedBox(6, boxX + avatarSize + 10, boxY + 5, barWidth, barHeight, Color(50, 50, 60, 200))
+    draw.SimpleText(job .. " | $" .. string.Comma(salary) .. "/hr", "DarkRP_HUD", boxX + avatarSize + 15, boxY + 8, textColor, TEXT_ALIGN_LEFT)
+
+    -- Money Display
+    draw.RoundedBox(6, boxX + avatarSize + 10, boxY + barHeight + padding + 5, barWidth, barHeight, Color(50, 50, 60, 200))
+    draw.SimpleText("$" .. string.Comma(money), "DarkRP_HUD", boxX + avatarSize + 15, boxY + barHeight + padding + 8, accentColor, TEXT_ALIGN_LEFT)
+
+    -- Health Bar
+    local healthBarY = boxY + (barHeight + padding) * 2 + 5
+    draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, barWidth, barHeight, Color(60, 60, 70, 200))
+    draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, math.max(barWidth * (smoothedHealth / maxHealth), 1), barHeight, healthColor)
+    draw.SimpleText("HP: " .. health, "DarkRP_HUD", boxX + avatarSize + 15, healthBarY + 3, textColor, TEXT_ALIGN_LEFT)
+
+    -- Create avatar if it doesn’t exist
+    if not IsValid(AvatarFrame) then
+        AvatarFrame = vgui.Create("AvatarImage")
+        AvatarFrame:SetSize(avatarSize, avatarSize)
+        AvatarFrame:SetPos(boxX + 5, boxY + 5)
+        AvatarFrame:SetPlayer(ply, 64) -- Get Steam Avatar
     end
-    Agenda(gamemodeTable)
-    DrawVoiceChat(gamemodeTable)
-    LockDown(gamemodeTable)
+end)
 
-    Arrested(gamemodeTable)
-    AdminTell()
-end
+-- Hide Default HUD Elements
+hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
+    if name == "CHudHealth" or name == "CHudBattery" then
+        return false
+    end
+end)
+
+
 
 --[[---------------------------------------------------------------------------
 Entity HUDPaint things
