@@ -238,6 +238,7 @@ end)
 Drawing the HUD elements such as Health etc.
 ---------------------------------------------------------------------------]]
 local smoothedHealth = 100
+local smoothedArmor = 100 -- New variable for armor smoothing
 
 hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     local ply = LocalPlayer()
@@ -246,31 +247,35 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     -- Get Player Data
     local health = ply:Health()
     local maxHealth = ply:GetMaxHealth()
+    local armor = ply:Armor() -- Get player's armor
+    local maxArmor = 100 -- Max armor value
     local money = ply:getDarkRPVar("money") or 0
     local job = ply:getDarkRPVar("job") or "Unemployed"
     local salary = ply:getDarkRPVar("salary") or 0  -- Get salary
 
-    -- Smooth health animation
+    -- Smooth health and armor animation
     smoothedHealth = Lerp(0.1, smoothedHealth, health)
+    smoothedArmor = Lerp(0.1, smoothedArmor, armor)
 
     -- Screen Scaling
     local screenW, screenH = ScrW(), ScrH()
     local barWidth = screenW * 0.18
     local barHeight = screenH * 0.03
-    local avatarSize = screenH * 0.035 -- Avatar size
+    local avatarSize = screenH * 0.1 -- Avatar size
     local padding = screenH * 0.005
-    local totalHeight = barHeight * 3 + padding * 2 -- Total height including padding
+    local totalHeight = barHeight * 3 + padding * 2 -- Total height including padding for the new armor bar
 
     -- Positioning
     local boxX = screenW * 0.02 - 5
     local boxY = screenH * 0.9 - totalHeight - padding
-    local boxWidth = barWidth + avatarSize + 15  -- Make space for the avatar
+    local boxWidth = barWidth + avatarSize + 15  -- Adjust width for the larger avatar
     local boxHeight = totalHeight + padding * 2  -- Account for padding
 
     -- Colors
     local bgColor = Color(40, 40, 50, 220)
     local accentColor = Color(100, 170, 255, 255)
     local healthColor = Color(0, 170, 255, 255)
+    local armorColor = Color(0, 255, 0, 255) -- Armor bar color (green)
     local textColor = Color(230, 230, 230)
     local salaryColor = Color(150, 255, 150)
 
@@ -289,12 +294,20 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     local healthBarY = boxY + (barHeight + padding) * 2 + 5
     draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, barWidth, barHeight, Color(60, 60, 70, 200))
     draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, math.max(barWidth * (smoothedHealth / maxHealth), 1), barHeight, healthColor)
-    draw.SimpleText("HP: " .. health, "DarkRP_HUD", boxX + avatarSize + 15, healthBarY + 3, textColor, TEXT_ALIGN_LEFT)
+    -- Centered text for HP
+    draw.SimpleText("HP: " .. health, "DarkRP_HUD", boxX + avatarSize + 15 + (barWidth / 2), healthBarY + barHeight / 2, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+    -- Armor Bar (New)
+    local armorBarY = healthBarY + barHeight + padding
+    draw.RoundedBox(6, boxX + avatarSize + 10, armorBarY, barWidth, barHeight * 0.5, Color(60, 60, 70, 200))  -- Thinner bar
+    draw.RoundedBox(6, boxX + avatarSize + 10, armorBarY, math.max(barWidth * (smoothedArmor / maxArmor), 1), barHeight * 0.5, armorColor)
+    -- Centered text for Armor
+    draw.SimpleText("Armor: " .. armor, "DarkRP_HUD", boxX + avatarSize + 15 + (barWidth / 2), armorBarY + barHeight * 0.25, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
     -- Create avatar if it doesn’t exist
     if not IsValid(AvatarFrame) then
         AvatarFrame = vgui.Create("AvatarImage")
-        AvatarFrame:SetSize(avatarSize, avatarSize)
+        AvatarFrame:SetSize(avatarSize, avatarSize)  -- Scale up the avatar size
         AvatarFrame:SetPos(boxX + 5, boxY + 5)
         AvatarFrame:SetPlayer(ply, 64) -- Get Steam Avatar
     end
@@ -306,6 +319,16 @@ hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
         return false
     end
 end)
+
+
+
+-- Hide Default HUD Elements
+hook.Add("HUDShouldDraw", "HideDefaultHUD", function(name)
+    if name == "CHudHealth" or name == "CHudBattery" then
+        return false
+    end
+end)
+
 
 
 
