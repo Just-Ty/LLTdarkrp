@@ -25,7 +25,7 @@ https://github.com/FPtje/DarkRP/releases/tag/derived
 
 Just whatever you do, don't touch DarkRP's core files.
 
-## Getting help
+## Getting help uwu
 Please head to the official Discord!
 
 https://darkrp.page.link/discord
