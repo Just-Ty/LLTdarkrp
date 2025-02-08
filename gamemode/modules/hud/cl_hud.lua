@@ -303,14 +303,14 @@ hook.Add("HUDPaint", "DrawDarkRPHUD", function()
     draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, barWidth, barHeight, Color(60, 60, 70, 200))
     draw.RoundedBox(6, boxX + avatarSize + 10, healthBarY, math.max(barWidth * (smoothedHealth / maxHealth), 1), barHeight, healthColor)
     -- Centered text for HP
-    draw.SimpleText("HP: " .. health, "DarkRP_HUD", boxX + avatarSize + 15 + (barWidth / 2), healthBarY + barHeight / 2, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText("HP: " .. health, "DarkRP_HUD", boxX + avatarSize + 10 + (barWidth / 2), healthBarY + (barHeight / 2), textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
     -- Armor Bar (New)
     local armorBarY = healthBarY + barHeight + padding
     draw.RoundedBox(6, boxX + avatarSize + 10, armorBarY, barWidth, barHeight * 0.5, Color(60, 60, 70, 200))  -- Thinner bar
     draw.RoundedBox(6, boxX + avatarSize + 10, armorBarY, math.max(barWidth * (smoothedArmor / maxArmor), 1), barHeight * 0.5, armorColor)
     -- Centered text for Armor
-    draw.SimpleText("Armor: " .. armor, "DarkRP_HUD", boxX + avatarSize + 15 + (barWidth / 2), armorBarY + barHeight * 0.25, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    draw.SimpleText("Armor: " .. armor, "DarkRP_HUD", boxX + avatarSize + 10 + (barWidth / 2), armorBarY + (barHeight * 0.25), textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
     -- Create avatar if it doesn’t exist
     if not IsValid(AvatarFrame) then
